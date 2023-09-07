@@ -69,7 +69,7 @@ function App() {
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + "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",
+        "Authorization": "Bearer " + "api key",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(apiRequestBody)
