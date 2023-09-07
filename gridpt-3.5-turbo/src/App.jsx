@@ -33,6 +33,14 @@ function App() {
     }
   };
 
+  const randomCommand = () => {
+    let binary = "";
+    for(let i = 0; i < 64; ++i) {
+      binary += Math.floor(Math.random() * Math.floor(2));
+    }
+    sendCommand(binary);
+  }
+
   useEffect(() => {
     if (connection) {
       serial.connect()
@@ -75,7 +83,7 @@ function App() {
     };
 
     const newMessages = [...messages, newMessage];
-    setMessages(newMessages);
+    // setMessages(newMessages);
     await processMessageToChatGPT(newMessages);
   };
 
@@ -102,7 +110,7 @@ function App() {
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + "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",
+        "Authorization": "Bearer " + "api key",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(apiRequestBody)
@@ -110,10 +118,10 @@ function App() {
       return data.json();
     }).then((data) => {
       // console.log(data);
-      setMessages([...chatMessages, {
-        message: data.choices[0].message.content,
-        sender: "ChatGPT"
-      }]);
+      // setMessages([...chatMessages, {
+      //   message: data.choices[0].message.content,
+      //   sender: "ChatGPT"
+      // }]);
       // console.log(data.choices[0].message.content.replace(/(\r\n|\n|\r)/gm,"").match(/```([^`]+)```/));
       const match = data.choices[0].message.content.replace(/(\r\n|\n|\r)/gm,"").match(/```([^`]+)```/);
       if (match && match[1]) {
@@ -131,6 +139,7 @@ function App() {
         <button className='disconnect' onClick={turnOff}>disconnect</button>
         <button onClick={() => sendCommand("0001100000111100011111100001100000011000000110000000000000000000")}>Test Command</button>
         <button onClick={() => sendCommand("0001100000111100011111100001100000011000000110000000000000000011")}>Test Command 2</button>
+        <button onClick={() => randomCommand()}>Test Command 2</button>
         <br/>
         Draw a
         <MessageInput placeholder="circle" onSend={handleSend} />  
