@@ -20,6 +20,10 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
 
   const handleSend = async (message) => {
+
+    // draw an "up arrow" in a 8x8 binary grid. use 1 for on and 0 for off. output only a code snippet in plain text with no commas, so nothing else except the numbers
+    message = "Draw a " + message + " in an 8x8 binary grid. use 1 for on and 0 for off. output only a code snippet in plain text with no commas and nothing else except the numbers"; 
+
     const newMessage = {
       message,
       direction: 'outgoing',
@@ -30,8 +34,6 @@ function App() {
     
     setMessages(newMessages);
 
-    // Initial system message to determine ChatGPT functionality
-    // How it responds, how it talks, etc.
     setIsTyping(true);
     await processMessageToChatGPT(newMessages);
   };
@@ -67,7 +69,7 @@ function App() {
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + API_KEY,
+        "Authorization": "Bearer " + "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",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(apiRequestBody)
@@ -83,9 +85,13 @@ function App() {
     });
   }
 
+
   return (
     <div className="App">
-      <div style={{ position:"relative", height: "800px", width: "700px"  }}>
+      <div className='input-box'> 
+        Draw a
+        <MessageInput placeholder="circle" onSend={handleSend} />  
+      </div>
         <MainContainer>
           <ChatContainer>       
             <MessageList 
@@ -93,14 +99,18 @@ function App() {
               typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}
             >
               {messages.map((message, i) => {
-                console.log(message)
+                const match = message.message.match(/```plain text([^`]+)```/);
+
+                if (match && match[1]) {
+                  console.log(match[1]);
+                }
                 return <Message key={i} model={message} />
               })}
             </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />        
+            
+                  
           </ChatContainer>
         </MainContainer>
-      </div>
     </div>
   )
 }
