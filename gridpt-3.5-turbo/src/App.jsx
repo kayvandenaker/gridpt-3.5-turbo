@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserSerial } from "browser-serial";
-import Speech from './Speech.jsx';
+// import Speech from './Speech.jsx';
+import 'regenerator-runtime/runtime'
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './App.css'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MessageInput } from '@chatscope/chat-ui-kit-react';
 
 //TestTest
 const systemMessage = { 
@@ -13,6 +14,7 @@ const systemMessage = {
 function App() {
   const [connection, setConnection] = useState(false);
   const loader = useRef(null);
+  const input = useRef(null);
 
   const serial = new BrowserSerial();
 
@@ -105,26 +107,37 @@ function App() {
     });
   }
 
-  const handleTranscriptChange = (newTranscript) => {
-    if(newTranscript !== ""){
+  function handleSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const formJson = Object.fromEntries(formData.entries());
+    console.log(formJson.input);
+    handleSend(formJson.input);
+  }
 
-      handleSend(newTranscript);
-      console.log(newTranscript);
-    }
+  const { transcript, resetTranscript } = useSpeechRecognition();
+
+  const sendTranscript = (transcript) => {
+    handleSend(transcript);
+    input.current.defaultValue = transcript;
+    resetTranscript();
   };
 
   return (
     <div className="App">
-        <div className='connection'>{connection ? <div><button onClick={() => randomCommand()}>flush</button><button className='disconnect' onClick={turnOff}>disconnect</button></div> : <button className='connect' onClick={turnOn}>connect</button>}</div>
-        <div className="loader" ref={loader}></div>
-        
+      <div className='connection'>{connection ? <div><button onClick={() => randomCommand()}>flush</button><button className='disconnect' onClick={turnOff}>disconnect</button></div> : <button className='connect' onClick={turnOn}>connect</button>}</div>
+      <div className="loader" ref={loader}></div>
       <div className='input-box'> 
-        Draw a
-        <MessageInput placeholder="circle" onSend={handleSend} />  
-        <br/>
-        {/* <button onClick={() => sendCommand("0001100000111100011111100001100000011000000110000001100000011000")}>↑</button> */}
-        {/* <div>{loading ? "loading" : "not loading"}</div> */}
-        <Speech onTranscriptChange={handleTranscriptChange} />
+
+        <form method="post" onSubmit={handleSubmit}>
+          Draw a <br/> 
+          <input name="input" defaultValue="" placeholder='circle' ref={input}/>
+          <button type="submit">Send</button>
+        </form>
+
+        <button onClick={SpeechRecognition.startListening}>Start</button>
+        <button onClick={() => {SpeechRecognition.stopListening(); sendTranscript(transcript);}}>Stop</button>
+        {/* {transcript} */}
       </div>
     </div>
   )

@@ -68,9 +68,6 @@ button:focus-visible {
   }
 }
 
-.cs-message-list, .cs-main-container{
-  display: none;
-}
 
 .input-box{
   width: 300px;
@@ -81,30 +78,20 @@ button:focus-visible {
   height: 200px;
 }
 
-.cs-message-input{
+input{
+  border: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.1);;
+}
+
+/* input:focus{
   border: none !important;
-  margin: 0.5rem 0 2rem 0;
-  background-color: transparent !important;
-  
-}
+} */
 
-.cs-message-input__content-editor-wrapper{
-  background-color: #222 !important;
-  /* color: white !important; */
-}
-
-.cs-message-input__content-editor, .cs-message-input__content-editor-container {
-  background-color: transparent !important;
-  color: white !important;
-  
-}
-
-.cs-message-input__content-editor[data-placeholder]:empty:before {
-  color: rgba(255,255,255,0.6) !important;
-}
-
-.cs-message-input__tools:first-of-type{
-  display: none;
+textarea:focus, input:focus{
+  outline: none;
 }
 
 button {
@@ -135,10 +122,6 @@ button:hover{
 
 .disconnect{
   background-color: red;
-}
-
-.cs-message-input__content-editor-wrapper{
-  /* background-color: grey; */
 }
 
 
