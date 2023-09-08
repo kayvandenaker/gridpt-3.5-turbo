@@ -86,7 +86,7 @@ function App() {
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + "key",
+        "Authorization": "Bearer " + "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",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(apiRequestBody)
@@ -104,16 +104,16 @@ function App() {
 
   return (
     <div className="App">
-        <div className='connection'>{connection ? <button className='disconnect' onClick={turnOff}>disconnect</button> : <button className='connect' onClick={turnOn}>connect</button>}</div>
+        <div className='connection'>{connection ? <div><button onClick={() => randomCommand()}>flush</button><button className='disconnect' onClick={turnOff}>disconnect</button></div> : <button className='connect' onClick={turnOn}>connect</button>}</div>
+        <div className={"loader " + (loading ? "loading" : "off")}></div>
+        
       <div className='input-box'> 
         Draw a
         <MessageInput placeholder="circle" onSend={handleSend} />  
 
         <br/>
-        <button onClick={() => sendCommand("0001100000111100011111100001100000011000000110000001100000011000")}>↑</button>
-        <button onClick={() => randomCommand()}>random</button>
-        <button onClick={() => handleSend("rectangle")}>rect</button>
-        <div>{loading ? "loading" : "not loading"}</div>
+        {/* <button onClick={() => sendCommand("0001100000111100011111100001100000011000000110000001100000011000")}>↑</button> */}
+        {/* <div>{loading ? "loading" : "not loading"}</div> */}
       </div>
     </div>
   )

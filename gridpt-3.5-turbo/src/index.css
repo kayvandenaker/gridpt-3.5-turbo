@@ -108,7 +108,7 @@ button:focus-visible {
 }
 
 button {
-  margin: 0 4px 4px 0;
+  margin: 0 8px 4px 0;
   padding: 4px 8px;
   border: none !important;
   background-color: rgba(255,255,255,0.6);
@@ -139,4 +139,42 @@ button:hover{
 
 .cs-message-input__content-editor-wrapper{
   /* background-color: grey; */
+}
+
+
+.loader{
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  background-color: #6ea9d7;
+  filter: blur(200px);
+  border-radius: 100%;
+  transition: all 0.2s;
+  opacity: 0.6;
+}
+
+.loader.loading{
+  animation: load 3s infinite;
+  opacity: 1;
+}
+
+@keyframes load {
+  0% {
+    filter: blur(200px);
+    width: 500px;
+    height: 500px;
+  }
+  50% {
+    filter: blur(50px);
+    width: 300px;
+    height: 300px;
+  }
+  100%{
+    filter: blur(200px);
+    width: 500px;
+    height: 500px;
+  }
 }
