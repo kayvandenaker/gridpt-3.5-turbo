@@ -11,6 +11,8 @@ const systemMessage = {
 
 function App() {
   const [connection, setConnection] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const serial = new BrowserSerial();
 
   const turnOn = () => { setConnection(true); };
@@ -61,7 +63,9 @@ function App() {
     sendCommand("00111100 01111110 01100110 00001100 00011000 00000000 00011000 00011000");
     console.log("Fetching data for: ", message);
 
-    message = "Draw a " + message + " in an 8x8 binary grid. use 1 for on and 0 for off. output only a code snippet in plain text with no commas and nothing else except the numbers. the numbers should be surrounded by ``` on both sides"; 
+    message = "Draw a " + message + " in a 8x8 bitmap grid formatted as a plain text inside a code snipper. output only the code snippet with no comments and only containing the bitmap, where 1 is on and 0 is off. your answer should look like this, just swap the 0s and 1s for the shape you drew: ```let bitmap = [[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 1, 1, 1, 1, 0, 0],[0, 0, 1, 0, 0, 1, 0, 0],[0, 0, 1, 0, 0, 1, 0, 0],[0, 0, 1, 1, 1, 1, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0]];```"; 
+    
+    setLoading(true);
     await processMessageToChatGPT([{ message, direction: 'outgoing', sender: "user" }]);
   };
 
@@ -76,23 +80,24 @@ function App() {
       return { role: role, content: messageObject.message}
     });
 
-    const apiRequestBody = { "model": "gpt-4", "messages": [ systemMessage, ...apiMessages ] }
+    const apiRequestBody = { "model": "gpt-3.5-turbo", "messages": [ systemMessage, ...apiMessages ] }
 
     await fetch("https://api.openai.com/v1/chat/completions", 
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + "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",
+        "Authorization": "Bearer " + "key",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(apiRequestBody)
     }).then((data) => {
       return data.json();
     }).then((data) => {
-      // console.log(data);
+      console.log(data.choices[0].message.content);
       const match = data.choices[0].message.content.replace(/(\r\n|\n|\r)/gm,"").match(/```([^`]+)```/);
       if (match && match[1]) {
-        sendCommand(match[1]);
+        sendCommand(match[1].replace(/\D/g,''));
+        setLoading(false);
       }
     });
   }
@@ -108,6 +113,7 @@ function App() {
         <button onClick={() => sendCommand("0001100000111100011111100001100000011000000110000001100000011000")}>↑</button>
         <button onClick={() => randomCommand()}>random</button>
         <button onClick={() => handleSend("rectangle")}>rect</button>
+        <div>{loading ? "loading" : "not loading"}</div>
       </div>
     </div>
   )
